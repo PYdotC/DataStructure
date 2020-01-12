@@ -1,0 +1,6 @@
+#ifndef DATASTRUCTURE_COMMON_H
+#define DATASTRUCTURE_COMMON_H
+
+static int DELT_DEPTH = 5;
+
+#endif
