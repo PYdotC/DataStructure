@@ -36,18 +36,26 @@ void BSTTest1() {
 
 	BSTTreeNode* node2 = searchBSTTreeParentNode(treeRoot, 6);
 	if (node2 != NULL) {
-		printf("find node %d;\n", TREE_VALUE(node2));
+		printf("find node %d parent node %d\n", 6, TREE_VALUE(node2));
 	}
 	else {
-		printf("not find node %d;\n", 6);
+		printf("not find node %d parent node\n", 6);
 	}
 
 	BSTTreeNode* node3 = searchBSTTreeParentNode(treeRoot, 4);
 	if (node3 != NULL) {
-		printf("find node %d parent node is %d;\n", 4, TREE_VALUE(node3));
+		printf("find node %d parent node is %d\n", 4, TREE_VALUE(node3));
 	}
 	else {
-		printf("not find node %d parent node;\n", 4);
+		printf("not find node %d parent node\n", 4);
+	}
+
+	BSTTreeNode* node8 = searchBSTTreeParentNode(treeRoot, 8);
+	if (node8 != NULL) {
+		printf("find node %d parent node is %d\n", 8, TREE_VALUE(node8));
+	}
+	else {
+		printf("not find node %d parent node\n", 8);
 	}
 
 	BSTTreeNode* node4 = searchBSTTreeParentNode(treeRoot, TREE_VALUE(treeRoot->root));
@@ -60,10 +68,10 @@ void BSTTest1() {
 
 	BSTTreeNode* node5 = searchBSTTreeNextNode(treeRoot->root);
 	if (node5 != NULL) {
-		printf("find node %d parent node is %d;\n", TREE_VALUE(treeRoot->root), TREE_VALUE(node5));
+		printf("find node %d next node is %d;\n", TREE_VALUE(treeRoot->root), TREE_VALUE(node5));
 	}
 	else {
-		printf("not find node %d parent node;\n", TREE_VALUE(treeRoot->root));
+		printf("not find node %d next node;\n", TREE_VALUE(treeRoot->root));
 	}
 
 	BSTTreeNode* node6 = deleteBSTTreeNode(treeRoot, 15);
@@ -87,4 +95,6 @@ void BSTTest1() {
 	}
 
 	destroyBSTTree(treeRoot);
+
+	system("pause");
 }

@@ -119,6 +119,17 @@ void addAVLTreeNode(AVLTreeRoot* root, AVLTreeNode* rootNode, AVLTreeNode* node)
 	TREE_HEIGHT(rootNode) = calculateTreeNodeHeight(rootNode);
 }
 
+void insertAVLTreeNode(AVLTreeRoot* root, AVLTreeNode* node) {
+	if (root->root == NULL) {
+		root->root = node;
+		TREE_HEIGHT(node) = 1;
+		PARENT_NODE(node) = NULL;
+		LEFT_NODE(node) = NULL;
+		RIGHT_NODE(node) = NULL;
+	}
+	addAVLTreeNode(root, root->root, node);
+}
+
 void deleteAVLNode(AVLTreeNode* node) {
 	if (LEFT_NODE(node) != NULL) {
 		deleteAVLNode(LEFT_NODE(node));

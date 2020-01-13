@@ -79,6 +79,10 @@ void printBSTTree(BSTTreeRoot *treeRoot) {
 }
 
 BSTTreeNode* findBSTNode(BSTTreeNode* node, int value) {
+	if (node == NULL) {
+		return NULL;
+	}
+
 	if (TREE_VALUE(node) == value) {
 		return node;
 	}
@@ -96,22 +100,14 @@ BSTTreeNode* searchBSTTreeNode(BSTTreeRoot* root, int value) {
 }
 
 BSTTreeNode* findParentNode(BSTTreeNode* node, int value) {
-	if (LEFT_NODE(node) != NULL) {
+	if (TREE_VALUE(node) > value && LEFT_NODE(node) != NULL) {
 		if (TREE_LEFT_VALUE(node) == value)
 			return node;
-		BSTTreeNode* n = findParentNode(LEFT_NODE(node), value);
-		if (n != NULL) {
-			return n;
-		}
-	}
-
-	if (RIGHT_NODE(node) != NULL) {
+		return findParentNode(LEFT_NODE(node), value);
+	} else if (RIGHT_NODE(node) != NULL) {
 		if (TREE_RIGHT_VALUE(node) == value)
 			return node;
-		BSTTreeNode* n = findParentNode(RIGHT_NODE(node), value);
-		if (n != NULL) {
-			return n;
-		}
+		return findParentNode(RIGHT_NODE(node), value);
 	}
 
 	return NULL;
