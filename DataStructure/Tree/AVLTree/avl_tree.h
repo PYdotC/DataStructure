@@ -32,8 +32,8 @@ struct AVLTreeRoot {
 AVLTreeRoot* createAVLTree(int(*comapreFunc) (AVLTreeNode* node1, AVLTreeNode* node2));
 void insertAVLTreeNode(AVLTreeRoot* root, AVLTreeNode* node);
 AVLTreeNode* searchAVLTreeParentNode(AVLTreeRoot *root, int value);
-AVLTreeNode* searchAVLTreePrevNode(AVLTreeRoot *root);
-AVLTreeNode* searchAVLTreeNextNode(AVLTreeRoot *root);
+AVLTreeNode* searchAVLTreePrevNode(AVLTreeNode *root);
+AVLTreeNode* searchAVLTreeNextNode(AVLTreeNode *root);
 AVLTreeNode* searchAVLTreeNode(AVLTreeRoot *root, int value);
 AVLTreeNode* deleteAVLTreeNode(AVLTreeRoot *root, int value);
 void destroyAVLTree(AVLTreeRoot *treeRoot);

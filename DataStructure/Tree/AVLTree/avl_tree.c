@@ -74,6 +74,29 @@ void doubleRotateLeftRight(AVLTreeRoot* root, AVLTreeNode* rootNode) {
 	singleRotateRight(root, rootNode);
 }
 
+void rebalance(AVLTreeRoot* root, AVLTreeNode* rootNode) {
+	int leftHeight = calculateTreeNodeHeight(LEFT_NODE(rootNode));
+	int rightHeight = calculateTreeNodeHeight(RIGHT_NODE(rootNode));
+	if (abs(leftHeight - rightHeight) >= 2) {
+		if (leftHeight - rightHeight >= 2) {
+			if (TREE_HEIGHT(LEFT_NODE(rootNode)) > TREE_HEIGHT(RIGHT_NODE(rootNode))) {
+				singleRotateRight(root, rootNode);
+			}
+			else {
+				doubleRotateLeftRight(root, rootNode);
+			}
+		}
+		else {
+			if (TREE_HEIGHT(LEFT_NODE(rootNode)) < TREE_HEIGHT(RIGHT_NODE(rootNode))) {
+				singleRotateLeft(root, rootNode);
+			}
+			else {
+				doubleRotateRightLeft(root, rootNode);
+			}
+		}
+	}
+}
+
 void addAVLTreeNode(AVLTreeRoot* root, AVLTreeNode* rootNode, AVLTreeNode* node) {
 	if (root->compare(node, rootNode) > 0) {
 		if (RIGHT_NODE(rootNode) == NULL) {
@@ -96,26 +119,8 @@ void addAVLTreeNode(AVLTreeRoot* root, AVLTreeNode* rootNode, AVLTreeNode* node)
 		}
 	}
 
-	int leftHeight = calculateTreeNodeHeight(LEFT_NODE(rootNode));
-	int rightHeight = calculateTreeNodeHeight(RIGHT_NODE(rootNode));
-	if (abs(leftHeight - rightHeight) >= 2) {
-		if (leftHeight - rightHeight >= 2) {
-			if (TREE_VALUE(node) < TREE_VALUE(LEFT_NODE(rootNode))) {
-				singleRotateRight(root, rootNode);
-			}
-			else {
-				doubleRotateLeftRight(root, rootNode);
-			}
-		}
-		else {
-			if (TREE_VALUE(node) > TREE_VALUE(RIGHT_NODE(rootNode))) {
-				singleRotateLeft(root, rootNode);
-			}
-			else {
-				doubleRotateRightLeft(root, rootNode);
-			}
-		}
-	}
+	rebalance(root, rootNode);
+
 	TREE_HEIGHT(rootNode) = calculateTreeNodeHeight(rootNode);
 }
 
@@ -126,6 +131,7 @@ void insertAVLTreeNode(AVLTreeRoot* root, AVLTreeNode* node) {
 		PARENT_NODE(node) = NULL;
 		LEFT_NODE(node) = NULL;
 		RIGHT_NODE(node) = NULL;
+		return;
 	}
 	addAVLTreeNode(root, root->root, node);
 }
@@ -167,4 +173,142 @@ void printAVLTreeNode(AVLTreeNode* node, int depth) {
 
 void printAVLTree(AVLTreeRoot *treeRoot) {
 	printAVLTreeNode(treeRoot->root, 0);
+}
+
+AVLTreeNode* findAVLNode(AVLTreeNode* rootNode, int value) {
+	if (rootNode == NULL) {
+		return NULL;
+	}
+
+	if (TREE_VALUE(rootNode) == value) {
+		return rootNode;
+	}
+
+	if (TREE_VALUE(rootNode) > value) {
+		return findAVLNode(LEFT_NODE(rootNode), value);
+	}
+	else {
+		return findAVLNode(RIGHT_NODE(rootNode), value);
+	}
+}
+
+AVLTreeNode* searchAVLTreeNode(AVLTreeRoot *root, int value) {
+	return findAVLNode(root->root, value);
+}
+
+AVLTreeNode* searchAVLTreeParentNode(AVLTreeRoot *root, int value) {
+	AVLTreeNode* node = findAVLNode(root->root, value);
+	if (node != NULL) {
+		return PARENT_NODE(node);
+	}
+
+	return NULL;
+}
+
+AVLTreeNode* searchAVLTreePrevNode(AVLTreeNode* root) {
+	AVLTreeNode* node = LEFT_NODE(root);
+	if (node != NULL) {
+		while (RIGHT_NODE(node) != NULL) {
+			node = RIGHT_NODE(node);
+		}
+	}
+	return node;
+}
+
+AVLTreeNode* searchAVLTreeNextNode(AVLTreeNode *root) {
+	AVLTreeNode* node = RIGHT_NODE(root);
+	if (node != NULL) {
+		while (LEFT_NODE(node) != NULL) {
+			node = LEFT_NODE(node);
+		}
+	}
+	return node;
+}
+
+AVLTreeNode* deleteAVLNode(AVLTreeRoot* root, AVLTreeNode* rootNode, int value) {
+	if (rootNode == NULL) {
+		return NULL;
+	}
+
+	if (TREE_VALUE(rootNode) == value) {
+		if (LEFT_NODE(rootNode) != NULL && RIGHT_NODE(rootNode) != NULL) {
+			if (TREE_HEIGHT(LEFT_NODE(rootNode)) > TREE_HEIGHT(RIGHT_NODE(rootNode))) {
+				AVLTreeNode* prevNode = searchAVLTreePrevNode(rootNode);
+				if (PARENT_NODE(rootNode) == NULL) {
+					root->root = prevNode;
+				}
+				else {
+					if (TREE_LEFT_VALUE(PARENT_NODE(rootNode)) == TREE_VALUE(prevNode))
+						LEFT_NODE(PARENT_NODE(rootNode)) = prevNode;
+					else
+						RIGHT_NODE(PARENT_NODE(rootNode)) = prevNode;
+				}
+			}
+		}
+
+	}
+	else if (value < TREE_VALUE(rootNode)) {
+
+	}
+	else if (value > TREE_VALUE(rootNode)) {
+
+	}
+}
+
+AVLTreeNode* deleteAVLTreeNode(AVLTreeRoot *root, int value) {
+	AVLTreeNode* deleteNode = searchAVLTreeNode(root, value);
+	if (deleteNode == NULL) {
+		return NULL;
+	}
+
+	/**
+	 * situation1: Both left node and right node are NULL
+	 */
+
+	if (LEFT_NODE(deleteNode) == NULL && RIGHT_NODE(deleteNode) == NULL) {
+		BSTTreeNode* parentNode = searchBSTTreeParentNode(root, TREE_VALUE(deleteNode));
+		if (parentNode != NULL) {
+			if (TREE_RIGHT_VALUE(parentNode) == TREE_VALUE(deleteNode))
+				RIGHT_NODE(parentNode) = NULL;
+			else
+				LEFT_NODE(parentNode) = NULL;
+		}
+		return deleteNode;
+	}
+
+	if (LEFT_NODE(deleteNode) == NULL || RIGHT_NODE(deleteNode) == NULL) {
+		BSTTreeNode* parentNode = searchBSTTreeParentNode(root, TREE_VALUE(deleteNode));
+		if (parentNode != NULL) {
+			if (TREE_RIGHT_VALUE(parentNode) == TREE_VALUE(deleteNode))
+				RIGHT_NODE(parentNode) = LEFT_NODE(deleteNode) != NULL ? LEFT_NODE(deleteNode) : RIGHT_NODE(deleteNode);
+			else
+				LEFT_NODE(parentNode) = LEFT_NODE(deleteNode) != NULL ? LEFT_NODE(deleteNode) : RIGHT_NODE(deleteNode);
+		}
+		else {
+			root->root = LEFT_NODE(deleteNode) != NULL ? LEFT_NODE(deleteNode) : RIGHT_NODE(deleteNode);
+		}
+		return deleteNode;
+	}
+
+	BSTTreeNode* parentNode = searchBSTTreeParentNode(root, TREE_VALUE(deleteNode));
+	BSTTreeNode* nextNode = searchBSTTreeNextNode(deleteNode);
+	BSTTreeNode* nextNodeParent = searchBSTTreeParentNode(root, TREE_VALUE(nextNode));
+	if (parentNode != NULL) {
+		if (TREE_RIGHT_VALUE(parentNode) == TREE_VALUE(deleteNode))
+			RIGHT_NODE(parentNode) = nextNode;
+		else
+			LEFT_NODE(parentNode) = nextNode;
+	}
+	else {
+		root->root = nextNode;
+	}
+
+	if (TREE_VALUE(nextNodeParent) != TREE_VALUE(deleteNode)) {
+		LEFT_NODE(nextNodeParent) = RIGHT_NODE(nextNode);
+	}
+
+	LEFT_NODE(nextNode) = LEFT_NODE(deleteNode);
+	RIGHT_NODE(nextNode) = RIGHT_NODE(deleteNode);
+
+	return deleteNode;
 }

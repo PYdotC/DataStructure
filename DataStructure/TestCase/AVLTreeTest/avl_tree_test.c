@@ -34,5 +34,5 @@ void AVLTreeTest() {
 
 int main() {
 	AVLTreeTest();
-	system("parse");
+	system("pause");
 }
